@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import { enrollmentsApi } from '../../api/client';
+import { enrollmentsApi, studentsApi } from '../../api/client';
 import { usePaginated, useFetch } from '../../hooks/useFetch';
 import { Spinner, Pagination, Toast, Modal, Btn, EmptyState, Card, CardHeader } from '../common/UI';
 
 export function Enrollments({ onNavigate }) {
   const { data, loading, error, page, setPage } = usePaginated(enrollmentsApi.list, 0, 8);
+  // Fetch all active students to cross-reference (filter out deleted/inactive)
+  const activeStudents = useFetch(() => studentsApi.all());
   const [detailModal, setDetailModal] = useState(null);
   const [toast, setToast] = useState(null);
 
@@ -12,6 +14,16 @@ export function Enrollments({ onNavigate }) {
     setToast({ msg, type });
     setTimeout(() => setToast(null), 3500);
   };
+
+  // Build a Set of active student IDs for fast lookup
+  const activeIds = new Set((activeStudents.data ?? []).map(s => s.id));
+
+  // Filter enrollment list — only show students that are still active
+  const filteredContent = data?.content?.filter(s =>
+    activeStudents.loading || activeIds.has(s.studentId)
+  ) ?? [];
+
+  const isLoading = loading || activeStudents.loading;
 
   return (
     <>
@@ -24,7 +36,7 @@ export function Enrollments({ onNavigate }) {
             color: 'var(--text)', margin: 0, letterSpacing: '-0.03em',
           }}>Enrollments</h1>
           <p style={{ color: 'var(--ink-faint)', margin: '6px 0 0', fontSize: 11, fontFamily: 'var(--font-mono)', letterSpacing: '0.02em' }}>
-            {data?.totalElements ?? 0} students enrolled
+            {filteredContent.length > 0 ? filteredContent.length : data?.totalElements ?? 0} students enrolled
           </p>
         </div>
         <Btn onClick={() => onNavigate('enroll')}>+ Enroll Student</Btn>
@@ -32,9 +44,9 @@ export function Enrollments({ onNavigate }) {
 
       <Card>
         <CardHeader title="Enrolled Students" />
-        {loading ? <Spinner /> : error ? (
+        {isLoading ? <Spinner /> : error ? (
           <div style={{ padding: 24, color: 'var(--red)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>Error: {error}</div>
-        ) : !data?.content?.length ? (
+        ) : !filteredContent.length ? (
           <EmptyState icon="◎" title="No enrollments yet" subtitle="enroll a student to see them here" />
         ) : (
           <div style={{ overflowX: 'auto' }}>
@@ -54,7 +66,7 @@ export function Enrollments({ onNavigate }) {
                 </tr>
               </thead>
               <tbody>
-                {data.content.map((s, i) => (
+                {filteredContent.map((s) => (
                   <tr key={s.studentId} style={{
                     borderBottom: '1px solid var(--border)',
                     background: 'transparent',

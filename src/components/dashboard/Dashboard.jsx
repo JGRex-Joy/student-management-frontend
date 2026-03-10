@@ -15,18 +15,24 @@ export function Dashboard() {
       value: students.data?.totalElements ?? '—',
       sub: 'total registered',
       symbol: '◉',
+      color: '#2d6a4f',
+      bg: 'rgba(45,106,79,0.06)',
     },
     {
       label: 'Courses',
       value: courses.data?.totalElements ?? '—',
       sub: 'active courses',
       symbol: '◎',
+      color: '#1e4d8c',
+      bg: 'rgba(30,77,140,0.06)',
     },
     {
       label: 'Enrolled',
       value: enrolled.data?.totalElements ?? '—',
       sub: 'students in courses',
       symbol: '◈',
+      color: '#7c3d12',
+      bg: 'rgba(124,61,18,0.06)',
     },
     {
       label: 'Coverage',
@@ -35,11 +41,23 @@ export function Dashboard() {
         : '—',
       sub: 'enrollment rate',
       symbol: '◐',
+      color: '#5b2d8e',
+      bg: 'rgba(91,45,142,0.06)',
     },
+  ];
+
+  const steps = [
+    { num: '01', title: 'Register Students', desc: 'Add student profiles with contact info and status tracking.' },
+    { num: '02', title: 'Create Courses', desc: 'Define courses with codes, durations, fees, and descriptions.' },
+    { num: '03', title: 'Enroll Students', desc: 'Assign one or more courses to any registered student.' },
+    { num: '04', title: 'Track Enrollments', desc: 'View all active enrollments, fees, and course details.' },
+    { num: '05', title: 'Manage Records', desc: 'Edit, deactivate, or delete students and courses as needed.' },
+    { num: '06', title: 'Monitor Coverage', desc: 'Use the dashboard to track enrollment rates at a glance.' },
   ];
 
   return (
     <div>
+      {/* Header */}
       <div style={{ marginBottom: 32 }}>
         <h1 style={{
           fontSize: 26,
@@ -60,70 +78,162 @@ export function Dashboard() {
         </p>
       </div>
 
+      {/* Stats */}
       {loading ? <Spinner /> : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 28 }}>
           {stats.map(s => <StatCard key={s.label} {...s} />)}
         </div>
       )}
 
+      {/* Bottom section — 2 cols */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-        <InfoCard title="Quick Start">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-            {[
-              ['01', 'Add Students via the sidebar'],
-              ['02', 'Create Courses with fees & durations'],
-              ['03', 'Go to Enroll Student to assign courses'],
-              ['04', 'View all enrollments under Enrollments'],
-            ].map(([num, text]) => (
+
+        {/* Quick Start — expanded */}
+        <div style={{
+          background: 'var(--white)',
+          borderRadius: 8,
+          border: '1px solid var(--border)',
+          overflow: 'hidden',
+        }}>
+          <div style={{
+            padding: '14px 20px',
+            borderBottom: '1px solid var(--border)',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          }}>
+            <div>
+              <div style={{
+                fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 14,
+                color: 'var(--text)', letterSpacing: '-0.02em',
+              }}>Getting Started</div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--ink-faint)', marginTop: 2 }}>
+                how to use this system
+              </div>
+            </div>
+            <span style={{
+              fontFamily: 'var(--font-mono)', fontSize: 18,
+              color: 'var(--cream-deeper)',
+            }}>◈</span>
+          </div>
+          <div style={{ padding: '6px 20px 18px' }}>
+            {steps.map(({ num, title, desc }) => (
               <div key={num} style={{
-                display: 'flex', alignItems: 'flex-start', gap: 14,
-                padding: '10px 0',
+                display: 'flex', gap: 16, padding: '12px 0',
                 borderBottom: '1px solid var(--border)',
               }}>
-                <span style={{
+                <div style={{
                   fontFamily: 'var(--font-mono)', fontSize: 10,
                   color: 'var(--ink-faint)', letterSpacing: '0.05em',
-                  paddingTop: 2, flexShrink: 0,
-                }}>{num}</span>
-                <span style={{ fontSize: 13, color: 'var(--ink-muted)' }}>{text}</span>
+                  paddingTop: 2, flexShrink: 0, width: 20,
+                }}>{num}</div>
+                <div>
+                  <div style={{
+                    fontSize: 13, fontWeight: 600,
+                    color: 'var(--text)', letterSpacing: '-0.01em', marginBottom: 2,
+                  }}>{title}</div>
+                  <div style={{
+                    fontSize: 11, color: 'var(--ink-muted)',
+                    fontFamily: 'var(--font-mono)', lineHeight: 1.5,
+                  }}>{desc}</div>
+                </div>
               </div>
             ))}
           </div>
-        </InfoCard>
+        </div>
 
-        <InfoCard title="System">
-          {[
-            ['Backend',   'Spring Boot 3 + JPA'],
-            ['Database',  'MySQL'],
-            ['Security',  'Spring Security + CSRF'],
-            ['Auth',      'Form Login (BCrypt)'],
-            ['Frontend',  'React 18 (SPA)'],
-          ].map(([label, value]) => (
-            <div key={label} style={{
-              display: 'flex', justifyContent: 'space-between',
-              padding: '9px 0', borderBottom: '1px solid var(--border)',
+        {/* Right col — Tips + Status */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+          {/* Pro tips */}
+          <div style={{
+            background: 'var(--ink-2)',
+            borderRadius: 8,
+            border: '1px solid rgba(255,255,255,0.06)',
+            overflow: 'hidden',
+            flex: 1,
+          }}>
+            <div style={{
+              padding: '14px 20px',
+              borderBottom: '1px solid rgba(255,255,255,0.06)',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             }}>
-              <span style={{
-                fontFamily: 'var(--font-mono)', fontSize: 11,
-                color: 'var(--ink-faint)', letterSpacing: '0.04em',
-              }}>{label}</span>
-              <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--ink-muted)' }}>{value}</span>
+              <div style={{
+                fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 14,
+                color: 'rgba(247,244,239,0.9)', letterSpacing: '-0.02em',
+              }}>Tips & Notes</div>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 16, color: 'rgba(247,244,239,0.2)' }}>◉</span>
             </div>
-          ))}
-        </InfoCard>
+            <div style={{ padding: '6px 20px 18px' }}>
+              {[
+                { icon: '→', tip: 'Duplicate course codes are blocked automatically.' },
+                { icon: '→', tip: 'Deleting a student removes all their enrollments too.' },
+                { icon: '→', tip: 'A student can be enrolled in multiple courses at once.' },
+                { icon: '→', tip: 'Inactive students and courses are hidden from lists.' },
+                { icon: '→', tip: 'Enrollment skips courses the student already has.' },
+              ].map(({ icon, tip }, i) => (
+                <div key={i} style={{
+                  display: 'flex', gap: 12, padding: '10px 0',
+                  borderBottom: '1px solid rgba(255,255,255,0.05)',
+                  alignItems: 'flex-start',
+                }}>
+                  <span style={{
+                    fontFamily: 'var(--font-mono)', fontSize: 11,
+                    color: 'rgba(247,244,239,0.25)', flexShrink: 0, paddingTop: 1,
+                  }}>{icon}</span>
+                  <span style={{
+                    fontSize: 12, color: 'rgba(247,244,239,0.55)',
+                    fontFamily: 'var(--font-mono)', lineHeight: 1.55,
+                  }}>{tip}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Stack info — compact */}
+          <div style={{
+            background: 'var(--white)',
+            borderRadius: 8,
+            border: '1px solid var(--border)',
+            padding: '14px 20px',
+          }}>
+            <div style={{
+              fontFamily: 'var(--font-mono)', fontSize: 9,
+              color: 'var(--ink-faint)', textTransform: 'uppercase',
+              letterSpacing: '0.1em', marginBottom: 12,
+            }}>Tech Stack</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {['Spring Boot 3', 'JPA / Hibernate', 'MySQL', 'BCrypt Auth', 'React 18', 'Vite'].map(tag => (
+                <span key={tag} style={{
+                  fontFamily: 'var(--font-mono)', fontSize: 10,
+                  border: '1px solid var(--border)',
+                  borderRadius: 4, padding: '4px 9px',
+                  color: 'var(--ink-muted)',
+                  letterSpacing: '0.02em',
+                }}>{tag}</span>
+              ))}
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
   );
 }
 
-function StatCard({ label, value, sub, symbol }) {
+function StatCard({ label, value, sub, symbol, color, bg }) {
   return (
     <div style={{
       background: 'var(--white)',
       borderRadius: 8,
       border: '1px solid var(--border)',
-      padding: '20px 20px',
+      padding: '20px',
+      position: 'relative',
+      overflow: 'hidden',
     }}>
+      {/* Subtle color tint top bar */}
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0, height: 3,
+        background: color, opacity: 0.35, borderRadius: '8px 8px 0 0',
+      }} />
       <div style={{
         display: 'flex', justifyContent: 'space-between',
         alignItems: 'flex-start', marginBottom: 14,
@@ -135,7 +245,9 @@ function StatCard({ label, value, sub, symbol }) {
         }}>{label}</span>
         <span style={{
           fontFamily: 'var(--font-mono)',
-          fontSize: 14, color: 'var(--cream-deeper)',
+          fontSize: 14,
+          color: color,
+          opacity: 0.4,
         }}>{symbol}</span>
       </div>
       <div style={{
@@ -149,30 +261,6 @@ function StatCard({ label, value, sub, symbol }) {
         fontFamily: 'var(--font-mono)', fontSize: 10,
         color: 'var(--ink-faint)', letterSpacing: '0.04em',
       }}>{sub}</div>
-    </div>
-  );
-}
-
-function InfoCard({ title, children }) {
-  return (
-    <div style={{
-      background: 'var(--white)',
-      borderRadius: 8,
-      border: '1px solid var(--border)',
-      overflow: 'hidden',
-    }}>
-      <div style={{
-        padding: '12px 18px',
-        borderBottom: '1px solid var(--border)',
-        fontFamily: 'var(--font-mono)',
-        fontSize: 10, fontWeight: 500,
-        color: 'var(--ink-muted)',
-        letterSpacing: '0.08em',
-        textTransform: 'uppercase',
-      }}>
-        {title}
-      </div>
-      <div style={{ padding: '4px 18px 14px' }}>{children}</div>
     </div>
   );
 }
