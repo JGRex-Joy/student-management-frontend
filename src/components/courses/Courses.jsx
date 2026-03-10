@@ -116,7 +116,7 @@ export function Courses() {
                     </td>
                     <td style={{ padding: '12px 18px', color: 'var(--ink-muted)' }}>{c.duration}</td>
                     <td style={{ padding: '12px 18px', fontFamily: 'var(--font-mono)', fontWeight: 500, fontSize: 12 }}>
-                      ₹{Number(c.fee).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                      ${Number(c.fee).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                     </td>
                     <td style={{ padding: '12px 18px' }}><Badge active={c.active} /></td>
                     <td style={{ padding: '12px 18px' }}>
@@ -149,7 +149,7 @@ export function Courses() {
               <Input value={form.duration} onChange={change('duration')} error={formErrors.duration} placeholder="6 Months" />
             </FormField>
           </div>
-          <FormField label="Course Fee (₹)" error={formErrors.fee} required>
+          <FormField label="Course Fee ($)" error={formErrors.fee} required>
             <Input type="number" step="0.01" min="0" value={form.fee} onChange={change('fee')} error={formErrors.fee} placeholder="1200.00" />
           </FormField>
           <FormField label="Description">
@@ -175,7 +175,7 @@ export function Courses() {
           <DetailRow label="Course Name" value={form.courseName} />
           <DetailRow label="Code"     value={form.courseCode} mono />
           <DetailRow label="Duration" value={form.duration} />
-          <DetailRow label="Fee"      value={`₹${Number(form.fee).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`} mono />
+          <DetailRow label="Fee"      value={`$${Number(form.fee).toLocaleString('en-US', { minimumFractionDigits: 2 })}`} mono />
           <DetailRow label="Status"   value={<Badge active={form.active} />} />
           {form.description && (
             <div style={{ marginTop: 16 }}>

@@ -5,7 +5,6 @@ import { Spinner, Pagination, Toast, Modal, Btn, EmptyState, Card, CardHeader } 
 
 export function Enrollments({ onNavigate }) {
   const { data, loading, error, page, setPage } = usePaginated(enrollmentsApi.list, 0, 8);
-  // Fetch all active students to cross-reference (filter out deleted/inactive)
   const activeStudents = useFetch(() => studentsApi.all());
   const [detailModal, setDetailModal] = useState(null);
   const [toast, setToast] = useState(null);
@@ -15,10 +14,8 @@ export function Enrollments({ onNavigate }) {
     setTimeout(() => setToast(null), 3500);
   };
 
-  // Build a Set of active student IDs for fast lookup
   const activeIds = new Set((activeStudents.data ?? []).map(s => s.id));
 
-  // Filter enrollment list — only show students that are still active
   const filteredContent = data?.content?.filter(s =>
     activeStudents.loading || activeIds.has(s.studentId)
   ) ?? [];
@@ -90,7 +87,7 @@ export function Enrollments({ onNavigate }) {
                       </span>
                     </td>
                     <td style={{ padding: '12px 18px', fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--green)', fontSize: 12 }}>
-                      ⃀{Number(s.totalFee || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                      ${Number(s.totalFee || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                     </td>
                     <td style={{ padding: '12px 18px' }}>
                       <Btn size="sm" variant="ghost" onClick={() => setDetailModal(s.studentId)}>View</Btn>
@@ -134,7 +131,7 @@ function EnrollmentDetailModal({ studentId, onClose }) {
             <SummaryItem label="Student" value={data.studentName} />
             <SummaryItem label="Email" value={data.email} small />
             <SummaryItem label="Courses" value={data.courseCount} />
-            <SummaryItem label="Total Fee" value={`⃀{Number(data.totalFee || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`} accent />
+            <SummaryItem label="Total Fee" value={`$${Number(data.totalFee || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`} accent />
           </div>
 
           <div style={{
@@ -172,7 +169,7 @@ function EnrollmentDetailModal({ studentId, onClose }) {
                   </td>
                   <td style={{ padding: '10px 14px', color: 'var(--ink-muted)' }}>{c.duration}</td>
                   <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', fontWeight: 500 }}>
-                    ⃀{Number(c.fee).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                    ${Number(c.fee).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                   </td>
                 </tr>
               ))}

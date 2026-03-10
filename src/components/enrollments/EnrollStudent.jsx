@@ -139,7 +139,7 @@ export function EnrollStudent({ onNavigate }) {
                         </td>
                         <td style={{ padding: '12px 18px', color: 'var(--ink-muted)' }}>{c.duration}</td>
                         <td style={{ padding: '12px 18px', fontFamily: 'var(--font-mono)', fontWeight: 500, fontSize: 12 }}>
-                          ⃀{Number(c.fee).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                          ${Number(c.fee).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                         </td>
                       </tr>
                     );
@@ -189,7 +189,7 @@ export function EnrollStudent({ onNavigate }) {
               <CardHeader title="Summary" />
               <div style={{ padding: '12px 16px' }}>
                 <SummaryRow label="Courses selected" value={selectedCourses.size} />
-                <SummaryRow label="Total fee" value={`⃀${totalFee.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`} accent />
+                <SummaryRow label="Total fee" value={`$${totalFee.toLocaleString('en-US', { minimumFractionDigits: 2 })}`} accent />
 
                 {selectedCoursesList.length > 0 && (
                   <div style={{ marginTop: 14 }}>
@@ -205,7 +205,7 @@ export function EnrollStudent({ onNavigate }) {
                       }}>
                         <span style={{ color: 'var(--text)' }}>{c.courseName}</span>
                         <span style={{ color: 'var(--ink-muted)', fontFamily: 'var(--font-mono)', fontSize: 11 }}>
-                          ⃀{Number(c.fee).toLocaleString('en-IN')}
+                          ${Number(c.fee).toLocaleString('en-US')}
                         </span>
                       </div>
                     ))}

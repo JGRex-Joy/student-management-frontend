@@ -150,17 +150,17 @@ export function Students() {
         <Modal title={modal === 'create' ? 'Add New Student' : 'Edit Student'} onClose={() => setModal(null)}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <FormField label="First Name" error={formErrors.firstName} required>
-              <Input value={form.firstName} onChange={change('firstName')} error={formErrors.firstName} placeholder="John" />
+              <Input value={form.firstName} onChange={change('firstName')} error={formErrors.firstName} placeholder="Zhanel" />
             </FormField>
             <FormField label="Last Name" error={formErrors.lastName} required>
-              <Input value={form.lastName} onChange={change('lastName')} error={formErrors.lastName} placeholder="Doe" />
+              <Input value={form.lastName} onChange={change('lastName')} error={formErrors.lastName} placeholder="Usonkulova" />
             </FormField>
           </div>
           <FormField label="Email" error={formErrors.email} required>
-            <Input type="email" value={form.email} onChange={change('email')} error={formErrors.email} placeholder="john@example.com" />
+            <Input type="email" value={form.email} onChange={change('email')} error={formErrors.email} placeholder="nepridumala@gmail.com" />
           </FormField>
           <FormField label="Phone">
-            <Input value={form.phoneNumber || ''} onChange={change('phoneNumber')} placeholder="+1 234 567 8900" />
+            <Input value={form.phoneNumber || ''} onChange={change('phoneNumber')} placeholder="0502 040 883" />
           </FormField>
           <FormField label="Address">
             <Textarea value={form.address || ''} onChange={change('address')} placeholder="Full address..." />

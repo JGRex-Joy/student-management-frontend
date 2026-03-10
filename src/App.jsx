@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Layout } from './components/layout/Layout';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { Students } from './components/students/Students';
@@ -75,13 +75,62 @@ const GLOBAL_CSS = `
 
 export default function App() {
   const [view, setView] = useState('dashboard');
-  const [page, setPage] = useState('login');
+  // 'loading' | 'login' | 'app'
+  const [page, setPage] = useState('loading');
+
+  // sessionStorage is cleared when the tab/browser is closed (unlike localStorage).
+  // We use a flag 'tab_active' to detect a fresh open vs a page refresh.
+  // - Page refresh: sessionStorage survives → flag is present → check server session.
+  // - New tab / closed & reopened: sessionStorage is gone → force login immediately.
+  useEffect(() => {
+    const isRefresh = sessionStorage.getItem('tab_active');
+
+    if (!isRefresh) {
+      // Brand-new tab or reopened after close — require login regardless of cookie
+      fetch('/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
+      setPage('login');
+      return;
+    }
+
+    // Same tab refresh — verify the server session is still alive
+    fetch('/api/students?page=0&size=1', { credentials: 'include' })
+      .then(res => {
+        if (res.status === 401 || res.status === 403) {
+          setPage('login');
+        } else {
+          setPage('app');
+        }
+      })
+      .catch(() => setPage('login'));
+  }, []);
+
+  if (page === 'loading') {
+    // Minimal full-screen spinner while we probe the session
+    return (
+      <>
+        <style>{GLOBAL_CSS}</style>
+        <div style={{
+          minHeight: '100vh', display: 'flex',
+          alignItems: 'center', justifyContent: 'center',
+          background: 'var(--cream)',
+        }}>
+          <div style={{
+            width: 32, height: 32,
+            border: '2px solid var(--border)',
+            borderTop: '2px solid var(--ink)',
+            borderRadius: '50%',
+            animation: 'spin 0.8s linear infinite',
+          }} />
+        </div>
+      </>
+    );
+  }
 
   if (page === 'login') {
     return (
       <>
         <style>{GLOBAL_CSS}</style>
-        <Login onSuccess={() => setPage('app')} />
+        <Login onSuccess={() => { sessionStorage.setItem('tab_active', '1'); setPage('app'); }} />
       </>
     );
   }
@@ -89,7 +138,7 @@ export default function App() {
   return (
     <>
       <style>{GLOBAL_CSS}</style>
-      <Layout activeView={view} onNavigate={setView} onLogout={() => setPage('login')}>
+      <Layout activeView={view} onNavigate={setView} onLogout={() => { sessionStorage.removeItem('tab_active'); setPage('login'); }}>
         {view === 'dashboard'   && <Dashboard />}
         {view === 'students'    && <Students />}
         {view === 'courses'     && <Courses />}
