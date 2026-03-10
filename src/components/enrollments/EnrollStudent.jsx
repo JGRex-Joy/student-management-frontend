@@ -83,7 +83,6 @@ export function EnrollStudent({ onNavigate }) {
           gap: 18,
           alignItems: 'start',
         }}>
-          {/* On mobile: student selector + summary come FIRST */}
           {isMobile && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <StudentSelector
@@ -105,7 +104,6 @@ export function EnrollStudent({ onNavigate }) {
             </div>
           )}
 
-          {/* Course selection */}
           <Card>
             <CardHeader title="Select Courses" subtitle={`${courses.data?.length ?? 0} available`} />
             {errors.courses && (
@@ -113,7 +111,6 @@ export function EnrollStudent({ onNavigate }) {
             )}
 
             {isMobile ? (
-              /* Mobile: stacked course cards */
               <div>
                 {courses.data?.map((c) => {
                   const checked = selectedCourses.has(c.id);
@@ -154,7 +151,6 @@ export function EnrollStudent({ onNavigate }) {
                 })}
               </div>
             ) : (
-              /* Desktop: table */
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                   <thead>
@@ -191,7 +187,6 @@ export function EnrollStudent({ onNavigate }) {
             )}
           </Card>
 
-          {/* Desktop: right col */}
           {!isMobile && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <StudentSelector

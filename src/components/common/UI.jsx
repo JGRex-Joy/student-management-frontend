@@ -1,4 +1,3 @@
-// ── Toast Notification ────────────────────────────────────────────────────────
 export function Toast({ message, type = 'success', onClose }) {
   if (!message) return null;
   const isSuccess = type === 'success';
@@ -23,7 +22,6 @@ export function Toast({ message, type = 'success', onClose }) {
   );
 }
 
-// ── Spinner ───────────────────────────────────────────────────────────────────
 export function Spinner() {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 64 }}>
@@ -32,7 +30,6 @@ export function Spinner() {
   );
 }
 
-// ── Pagination ────────────────────────────────────────────────────────────────
 export function Pagination({ page, totalPages, onChange }) {
   if (totalPages <= 1) return null;
   return (
@@ -63,7 +60,6 @@ function PagBtn({ children, active, disabled, onClick }) {
   );
 }
 
-// ── Badge ─────────────────────────────────────────────────────────────────────
 export function Badge({ active }) {
   return (
     <span style={{
@@ -82,7 +78,6 @@ export function Badge({ active }) {
   );
 }
 
-// ── Modal ─────────────────────────────────────────────────────────────────────
 export function Modal({ title, children, onClose, width = 540 }) {
   return (
     <div
@@ -93,7 +88,6 @@ export function Modal({ title, children, onClose, width = 540 }) {
         backdropFilter: 'blur(3px)',
         display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
         padding: 0,
-        // On wider screens, center vertically
       }}
     >
       <style>{`
@@ -124,7 +118,6 @@ export function Modal({ title, children, onClose, width = 540 }) {
           alignSelf: 'flex-end',
         }}
       >
-        {/* Mobile drag handle */}
         <div style={{ display: 'flex', justifyContent: 'center', padding: '10px 0 2px' }}>
           <div style={{ width: 36, height: 4, borderRadius: 2, background: 'var(--border)' }} className="mobile-handle" />
         </div>
@@ -144,7 +137,6 @@ export function Modal({ title, children, onClose, width = 540 }) {
   );
 }
 
-// ── FormField ─────────────────────────────────────────────────────────────────
 export function FormField({ label, error, children, required, style }) {
   return (
     <div style={{ marginBottom: 14, ...style }}>
@@ -161,7 +153,7 @@ const inputStyle = (error) => ({
   width: '100%', padding: '10px 12px', borderRadius: 6,
   border: `1.5px solid ${error ? 'var(--red)' : 'var(--border)'}`,
   background: 'var(--input-bg)', color: 'var(--text)',
-  fontSize: 16, // 16px prevents iOS zoom on focus
+  fontSize: 16, 
   fontFamily: 'var(--font-body)', outline: 'none',
   boxSizing: 'border-box', transition: 'border-color 0.13s',
   letterSpacing: '-0.01em',
@@ -181,7 +173,6 @@ export function Textarea({ error, ...props }) {
   return <textarea {...props} style={{ ...inputStyle(error), resize: 'vertical', minHeight: 90 }} />;
 }
 
-// ── Button ────────────────────────────────────────────────────────────────────
 export function Btn({ children, variant = 'primary', size = 'md', disabled, loading, onClick, type = 'button', style: extra }) {
   const base = {
     display: 'inline-flex', alignItems: 'center', gap: 6,
@@ -209,7 +200,6 @@ export function Btn({ children, variant = 'primary', size = 'md', disabled, load
   );
 }
 
-// ── Empty State ───────────────────────────────────────────────────────────────
 export function EmptyState({ icon = '—', title, subtitle }) {
   return (
     <div style={{ textAlign: 'center', padding: '56px 20px', color: 'var(--ink-faint)' }}>
@@ -220,7 +210,6 @@ export function EmptyState({ icon = '—', title, subtitle }) {
   );
 }
 
-// ── Card ──────────────────────────────────────────────────────────────────────
 export function Card({ children, style }) {
   return (
     <div style={{ background: 'var(--card)', borderRadius: 8, border: '1px solid var(--border)', boxShadow: '0 1px 4px rgba(15,14,13,0.04)', ...style }}>

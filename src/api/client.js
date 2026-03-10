@@ -1,4 +1,3 @@
-// ── Auth ──────────────────────────────────────────────────────────────────────
 export const authApi = {
   login: async (username, password) => {
     const body = new URLSearchParams({ username, password });
@@ -20,7 +19,6 @@ export const authApi = {
   },
 };
 
-// ── Base request ──────────────────────────────────────────────────────────────
 async function request(url, options = {}) {
   const headers = { 'Content-Type': 'application/json', ...options.headers };
 
@@ -54,7 +52,6 @@ export const api = {
   delete: (url)       => request(url, { method: 'DELETE' }),
 };
 
-// ── Students ──────────────────────────────────────────────────────────────────
 export const studentsApi = {
   list:    (page = 0, size = 8) => api.get(`/api/students?page=${page}&size=${size}`),
   all:     ()                   => api.get('/api/students/all'),
@@ -64,7 +61,6 @@ export const studentsApi = {
   delete:  (id)                 => api.delete(`/api/students/${id}`),
 };
 
-// ── Courses ───────────────────────────────────────────────────────────────────
 export const coursesApi = {
   list:    (page = 0, size = 8) => api.get(`/api/courses?page=${page}&size=${size}`),
   all:     ()                   => api.get('/api/courses/all'),
@@ -73,7 +69,6 @@ export const coursesApi = {
   update:  (id, data)           => api.put(`/api/courses/${id}`, data),
 };
 
-// ── Enrollments ───────────────────────────────────────────────────────────────
 export const enrollmentsApi = {
   list:    (page = 0, size = 8) => api.get(`/api/enrollments?page=${page}&size=${size}`),
   details: (studentId)          => api.get(`/api/enrollments/${studentId}/details`),

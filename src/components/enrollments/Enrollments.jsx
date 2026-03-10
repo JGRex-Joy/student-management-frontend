@@ -52,7 +52,6 @@ export function Enrollments({ onNavigate }) {
         ) : !filteredContent.length ? (
           <EmptyState icon="◎" title="No enrollments yet" subtitle="enroll a student to see them here" />
         ) : isMobile ? (
-          /* Mobile cards */
           <div>
             {filteredContent.map((s) => (
               <div key={s.studentId} style={{ padding: '14px 16px', borderBottom: '1px solid var(--border)' }}>
@@ -76,7 +75,6 @@ export function Enrollments({ onNavigate }) {
             </div>
           </div>
         ) : (
-          /* Desktop table */
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>

@@ -24,7 +24,6 @@ export function Layout({ children, activeView, onNavigate, onLogout }) {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  // Close sidebar on mobile when navigating
   function handleNavigate(view) {
     onNavigate(view);
     if (isMobile) setSidebarOpen(false);
@@ -40,7 +39,6 @@ export function Layout({ children, activeView, onNavigate, onLogout }) {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg)', position: 'relative' }}>
 
-      {/* Mobile overlay backdrop */}
       {isMobile && sidebarOpen && (
         <div
           onClick={() => setSidebarOpen(false)}
@@ -52,14 +50,12 @@ export function Layout({ children, activeView, onNavigate, onLogout }) {
         />
       )}
 
-      {/* Sidebar */}
       <aside style={{
         width: 220,
         background: 'var(--sidebar-bg)',
         borderRight: '1px solid var(--sidebar-border)',
         display: 'flex', flexDirection: 'column',
         flexShrink: 0,
-        // Desktop: static in flow; Mobile: fixed overlay
         ...(isMobile ? {
           position: 'fixed',
           top: 0, left: 0, bottom: 0,
@@ -77,7 +73,6 @@ export function Layout({ children, activeView, onNavigate, onLogout }) {
           transition: 'width 0.22s ease, min-width 0.22s ease',
         }),
       }}>
-        {/* Brand */}
         <div style={{
           padding: '28px 22px 22px',
           borderBottom: '1px solid var(--sidebar-border)',
@@ -97,7 +92,6 @@ export function Layout({ children, activeView, onNavigate, onLogout }) {
           }}>Admin Panel</div>
         </div>
 
-        {/* Nav */}
         <nav style={{ flex: 1, padding: '16px 12px', overflowY: 'auto' }}>
           {NAV.map(({ icon, label, view }) => (
             <NavItem
@@ -110,15 +104,12 @@ export function Layout({ children, activeView, onNavigate, onLogout }) {
           ))}
         </nav>
 
-        {/* Logout */}
         <div style={{ padding: '12px 12px 20px', borderTop: '1px solid var(--sidebar-border)' }}>
           <NavItem icon="→" label="Sign out" onClick={handleLogout} />
         </div>
       </aside>
 
-      {/* Main */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-        {/* Topbar */}
         <header style={{
           height: 54,
           background: 'var(--white)',
@@ -173,13 +164,11 @@ export function Layout({ children, activeView, onNavigate, onLogout }) {
               fontFamily: 'var(--font-mono)',
               fontSize: 12, color: 'var(--ink-muted)',
               letterSpacing: '0.02em',
-              // Hide on very small screens
               display: isMobile ? 'none' : 'inline',
             }}>Admin</span>
           </div>
         </header>
 
-        {/* Content */}
         <main style={{
           flex: 1,
           padding: isMobile ? '18px 14px' : '28px 28px',

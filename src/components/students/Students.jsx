@@ -106,7 +106,6 @@ export function Students() {
         ) : !data?.content?.length ? (
           <EmptyState icon="◉" title="No students yet" subtitle="add your first student to get started" />
         ) : isMobile ? (
-          /* Mobile card list */
           <div>
             {data.content.map((s) => (
               <div key={s.id} style={{
@@ -138,7 +137,6 @@ export function Students() {
             </div>
           </div>
         ) : (
-          /* Desktop table */
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>

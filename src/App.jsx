@@ -75,24 +75,16 @@ const GLOBAL_CSS = `
 
 export default function App() {
   const [view, setView] = useState('dashboard');
-  // 'loading' | 'login' | 'app'
   const [page, setPage] = useState('loading');
-
-  // sessionStorage is cleared when the tab/browser is closed (unlike localStorage).
-  // We use a flag 'tab_active' to detect a fresh open vs a page refresh.
-  // - Page refresh: sessionStorage survives → flag is present → check server session.
-  // - New tab / closed & reopened: sessionStorage is gone → force login immediately.
   useEffect(() => {
     const isRefresh = sessionStorage.getItem('tab_active');
 
     if (!isRefresh) {
-      // Brand-new tab or reopened after close — require login regardless of cookie
       fetch('/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
       setPage('login');
       return;
     }
 
-    // Same tab refresh — verify the server session is still alive
     fetch('/api/students?page=0&size=1', { credentials: 'include' })
       .then(res => {
         if (res.status === 401 || res.status === 403) {
@@ -105,7 +97,6 @@ export default function App() {
   }, []);
 
   if (page === 'loading') {
-    // Minimal full-screen spinner while we probe the session
     return (
       <>
         <style>{GLOBAL_CSS}</style>

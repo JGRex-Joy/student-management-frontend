@@ -351,7 +351,6 @@ export function Login({ onSuccess }) {
           </div>
         </div>
 
-        {/* Right */}
         <div className="login-right">
           <div className="login-card">
             <div className="login-header">

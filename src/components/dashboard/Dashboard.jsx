@@ -67,7 +67,6 @@ export function Dashboard() {
       )}
 
       <div className="dash-bottom">
-        {/* Getting Started */}
         <div style={{
           background: 'var(--white)', borderRadius: 8,
           border: '1px solid var(--border)', overflow: 'hidden',
@@ -95,9 +94,7 @@ export function Dashboard() {
           </div>
         </div>
 
-        {/* Right col */}
         <div className="dash-right-col">
-          {/* Tips */}
           <div style={{ background: 'var(--ink-2)', borderRadius: 8, border: '1px solid rgba(255,255,255,0.06)', overflow: 'hidden', flex: 1 }}>
             <div style={{ padding: '14px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 14, color: 'rgba(247,244,239,0.9)', letterSpacing: '-0.02em' }}>Tips & Notes</div>
@@ -119,7 +116,6 @@ export function Dashboard() {
             </div>
           </div>
 
-          {/* Tech stack */}
           <div style={{ background: 'var(--white)', borderRadius: 8, border: '1px solid var(--border)', padding: '14px 20px' }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--ink-faint)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>Tech Stack</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>

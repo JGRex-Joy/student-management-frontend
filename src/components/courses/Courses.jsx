@@ -91,7 +91,6 @@ export function Courses() {
         ) : !data?.content?.length ? (
           <EmptyState icon="◎" title="No courses yet" subtitle="create your first course" />
         ) : isMobile ? (
-          /* Mobile card list */
           <div>
             {data.content.map((c) => (
               <div key={c.id} style={{ padding: '14px 16px', borderBottom: '1px solid var(--border)' }}>
@@ -117,7 +116,6 @@ export function Courses() {
             </div>
           </div>
         ) : (
-          /* Desktop table */
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
