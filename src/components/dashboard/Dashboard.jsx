@@ -4,7 +4,7 @@ import { Spinner } from '../common/UI';
 
 export function Dashboard() {
   const students = useFetch(() => studentsApi.list(0, 1));
-  const courses = useFetch(() => coursesApi.list(0, 1));
+  const courses  = useFetch(() => coursesApi.list(0, 1));
   const enrolled = useFetch(() => enrollmentsApi.list(0, 1));
 
   const loading = students.loading || courses.loading || enrolled.loading;
@@ -32,9 +32,14 @@ export function Dashboard() {
       bg: 'rgba(16,185,129,0.1)',
     },
     {
-      label: 'Total Pages (Students)',
-      value: students.data?.totalPages ?? '—',
-      icon: '📄',
+      // FIX: replaced meaningless 'Total Pages (Students)' — totalPages depends on
+      // size=1 used only for fetching totalElements, so it always equals totalElements.
+      // Replaced with enrollment coverage ratio which is actually useful.
+      label: 'Enrollment Coverage',
+      value: (students.data?.totalElements && enrolled.data?.totalElements)
+        ? `${Math.round((enrolled.data.totalElements / students.data.totalElements) * 100)}%`
+        : '—',
+      icon: '📊',
       color: '#f59e0b',
       bg: 'rgba(245,158,11,0.1)',
     },
@@ -59,16 +64,16 @@ export function Dashboard() {
         <InfoCard title="Quick Start Guide" icon="🚀">
           <ul style={{ paddingLeft: 18, lineHeight: 2, fontSize: 14, color: 'var(--text-muted)', margin: 0 }}>
             <li>Add <strong>Students</strong> via the sidebar</li>
-            <li>Create <strong>Courses</strong> with fees & durations</li>
+            <li>Create <strong>Courses</strong> with fees &amp; durations</li>
             <li>Go to <strong>Enroll Student</strong> to assign courses</li>
             <li>View all enrollments under <strong>Enrollments</strong></li>
           </ul>
         </InfoCard>
         <InfoCard title="System Info" icon="⚙️">
-          <Row label="Backend" value="Spring Boot 3 + JPA" />
+          <Row label="Backend"  value="Spring Boot 3 + JPA" />
           <Row label="Database" value="MySQL" />
           <Row label="Security" value="Spring Security + CSRF" />
-          <Row label="Auth" value="Form Login (BCrypt)" />
+          <Row label="Auth"     value="Form Login (BCrypt)" />
           <Row label="Frontend" value="React 18 (SPA)" />
         </InfoCard>
       </div>

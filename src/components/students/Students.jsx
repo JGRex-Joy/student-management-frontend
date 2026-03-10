@@ -8,23 +8,24 @@ import {
 
 const EMPTY_FORM = { firstName: '', lastName: '', email: '', phoneNumber: '', address: '', active: true };
 
-function validate(f, editId) {
+// FIX: removed unused `editId` parameter
+function validate(f) {
   const e = {};
   if (!f.firstName.trim()) e.firstName = 'First name is required';
-  if (!f.lastName.trim()) e.lastName = 'Last name is required';
-  if (!f.email.trim()) e.email = 'Email is required';
+  if (!f.lastName.trim())  e.lastName  = 'Last name is required';
+  if (!f.email.trim())     e.email     = 'Email is required';
   else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email)) e.email = 'Invalid email';
   return e;
 }
 
 export function Students() {
   const { data, loading, error, page, setPage, refetch } = usePaginated(studentsApi.list, 0, 8);
-  const [toast, setToast] = useState(null);
-  const [modal, setModal] = useState(null); // null | 'create' | 'edit' | 'view'
-  const [form, setForm] = useState(EMPTY_FORM);
+  const [toast, setToast]         = useState(null);
+  const [modal, setModal]         = useState(null); // null | 'create' | 'edit' | 'view'
+  const [form, setForm]           = useState(EMPTY_FORM);
   const [formErrors, setFormErrors] = useState({});
-  const [saving, setSaving] = useState(false);
-  const [editId, setEditId] = useState(null);
+  const [saving, setSaving]       = useState(false);
+  const [editId, setEditId]       = useState(null);
 
   const notify = (msg, type = 'success') => {
     setToast({ msg, type });
@@ -115,8 +116,8 @@ export function Students() {
                     <td style={{ padding: '12px 16px' }}><Badge active={s.active} /></td>
                     <td style={{ padding: '12px 16px' }}>
                       <div style={{ display: 'flex', gap: 6 }}>
-                        <Btn size="sm" variant="ghost" onClick={() => openView(s)}>View</Btn>
-                        <Btn size="sm" variant="secondary" onClick={() => openEdit(s)}>Edit</Btn>
+                        <Btn size="sm" variant="ghost"      onClick={() => openView(s)}>View</Btn>
+                        <Btn size="sm" variant="secondary"  onClick={() => openEdit(s)}>Edit</Btn>
                       </div>
                     </td>
                   </tr>
@@ -169,10 +170,10 @@ export function Students() {
       {modal === 'view' && (
         <Modal title="Student Details" onClose={() => setModal(null)}>
           <DetailRow label="Full Name" value={`${form.firstName} ${form.lastName}`} />
-          <DetailRow label="Email" value={form.email} />
-          <DetailRow label="Phone" value={form.phoneNumber || '—'} />
-          <DetailRow label="Address" value={form.address || '—'} />
-          <DetailRow label="Status" value={<Badge active={form.active} />} />
+          <DetailRow label="Email"     value={form.email} />
+          <DetailRow label="Phone"     value={form.phoneNumber || '—'} />
+          <DetailRow label="Address"   value={form.address || '—'} />
+          <DetailRow label="Status"    value={<Badge active={form.active} />} />
           <div style={{ marginTop: 20, display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
             <Btn variant="secondary" onClick={() => setModal(null)}>Close</Btn>
             <Btn onClick={() => openEdit(form)}>Edit</Btn>

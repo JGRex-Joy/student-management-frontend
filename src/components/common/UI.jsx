@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 // ── Toast Notification ────────────────────────────────────────────────────────
 export function Toast({ message, type = 'success', onClose }) {
   if (!message) return null;
@@ -60,7 +58,9 @@ function PagBtn({ children, active, disabled, onClick }) {
         border: active ? '2px solid var(--accent)' : '1.5px solid var(--border)',
         background: active ? 'var(--accent)' : 'var(--card)',
         color: active ? '#fff' : 'var(--text)',
-        cursor: disabled ? 'not-allowed', opacity: disabled ? 0.45 : 1,
+        // FIX: was `cursor: disabled ? 'not-allowed',` — missing ternary fallback (SyntaxError)
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        opacity: disabled ? 0.45 : 1,
         fontFamily: 'inherit', fontWeight: active ? 600 : 400,
         transition: 'all 0.15s',
       }}
@@ -122,9 +122,10 @@ export function Modal({ title, children, onClose, width = 560 }) {
 }
 
 // ── FormField ─────────────────────────────────────────────────────────────────
-export function FormField({ label, error, children, required }) {
+// FIX: added `style` prop — was silently ignored, breaking gridColumn layout in Courses form
+export function FormField({ label, error, children, required, style }) {
   return (
-    <div style={{ marginBottom: 16 }}>
+    <div style={{ marginBottom: 16, ...style }}>
       <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6, color: 'var(--text-muted)' }}>
         {label}{required && <span style={{ color: 'var(--red)', marginLeft: 3 }}>*</span>}
       </label>
