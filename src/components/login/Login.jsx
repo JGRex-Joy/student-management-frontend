@@ -2,14 +2,17 @@ import { useState } from 'react';
 import { authApi } from '../../api/client';
 
 const CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap');
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: 'DM Sans', system-ui, sans-serif;
+    font-family: 'Instrument Sans', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
+    background: #f7f4ef;
   }
+
   @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
+    from { opacity: 0; transform: translateY(18px); }
     to   { opacity: 1; transform: translateY(0); }
   }
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -24,96 +27,262 @@ const CSS = `
     .login-left { display: none; }
   }
 
+  /* Left panel — dark ink */
   .login-left {
-    background: #16181e;
-    display: flex; flex-direction: column; justify-content: center;
-    padding: 60px 56px;
-    position: relative; overflow: hidden;
+    background: #1e1c1a;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 52px 56px;
+    position: relative;
+    overflow: hidden;
   }
+
+  /* Subtle texture lines */
   .login-left::before {
     content: '';
-    position: absolute; width: 420px; height: 420px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(99,102,241,0.25) 0%, transparent 70%);
-    top: -80px; left: -80px; pointer-events: none;
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 39px,
+      rgba(247,244,239,0.03) 40px
+    );
+    pointer-events: none;
   }
-  .login-left::after {
-    content: '';
-    position: absolute; width: 300px; height: 300px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
-    bottom: -60px; right: -60px; pointer-events: none;
-  }
-  .brand-logo {
-    width: 52px; height: 52px; background: #6366f1; border-radius: 14px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 26px; margin-bottom: 40px; position: relative; z-index: 1;
-  }
-  .brand-title {
-    font-size: 32px; font-weight: 800; color: #fff;
-    line-height: 1.2; margin-bottom: 16px; position: relative; z-index: 1;
-  }
-  .brand-subtitle {
-    font-size: 15px; color: rgba(255,255,255,0.5);
-    line-height: 1.6; max-width: 340px; position: relative; z-index: 1;
-  }
-  .feature-list {
-    margin-top: 48px; display: flex; flex-direction: column;
-    gap: 16px; position: relative; z-index: 1;
-  }
-  .feature-item { display: flex; align-items: center; gap: 14px; }
-  .feature-dot {
-    width: 36px; height: 36px; border-radius: 10px;
-    background: rgba(99,102,241,0.2);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px; flex-shrink: 0;
-  }
-  .feature-text { font-size: 14px; color: rgba(255,255,255,0.65); font-weight: 500; }
 
+  .brand-mark {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .brand-monogram {
+    width: 42px; height: 42px;
+    border: 1.5px solid rgba(247,244,239,0.2);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 18px; font-weight: 700;
+    color: #f7f4ef;
+    letter-spacing: -0.02em;
+  }
+
+  .brand-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: rgba(247,244,239,0.45);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  .hero-text {
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-headline {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: #f7f4ef;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+  }
+
+  .hero-headline em {
+    font-style: italic;
+    color: rgba(247,244,239,0.5);
+  }
+
+  .hero-sub {
+    font-size: 14px;
+    color: rgba(247,244,239,0.45);
+    line-height: 1.7;
+    max-width: 300px;
+    font-family: 'Instrument Sans', sans-serif;
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    position: relative; z-index: 1;
+  }
+
+  .feature-chip {
+    border: 1px solid rgba(247,244,239,0.1);
+    border-radius: 6px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .feature-chip-icon {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: rgba(247,244,239,0.35);
+    width: 18px;
+    flex-shrink: 0;
+  }
+
+  .feature-chip-label {
+    font-size: 12px;
+    color: rgba(247,244,239,0.55);
+    font-family: 'Instrument Sans', sans-serif;
+    letter-spacing: -0.01em;
+  }
+
+  /* Right panel — cream */
   .login-right {
-    display: flex; align-items: center; justify-content: center;
-    padding: 40px 24px; background: #f5f6fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    background: #f7f4ef;
   }
-  .login-card { width: 100%; max-width: 400px; animation: fadeInUp 0.4s ease; }
-  .login-card-header { margin-bottom: 32px; }
-  .login-card-header h1 { font-size: 26px; font-weight: 800; color: #1a1d23; margin-bottom: 6px; }
-  .login-card-header p { font-size: 14px; color: #6b7280; }
 
-  .form-field { margin-bottom: 18px; }
-  .form-field label {
-    display: block; font-size: 13px; font-weight: 600;
-    color: #6b7280; margin-bottom: 7px;
+  .login-card {
+    width: 100%;
+    max-width: 360px;
+    animation: fadeInUp 0.4s ease;
   }
+
+  .login-header {
+    margin-bottom: 36px;
+  }
+
+  .login-header h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 28px; font-weight: 700;
+    color: #0f0e0d;
+    letter-spacing: -0.03em;
+    margin-bottom: 6px;
+    line-height: 1.2;
+  }
+
+  .login-header p {
+    font-size: 13px;
+    color: #6b6560;
+    font-family: 'Instrument Sans', sans-serif;
+  }
+
+  .form-field { margin-bottom: 16px; }
+
+  .form-label {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    color: #6b6560;
+    margin-bottom: 6px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+
   .form-input {
-    width: 100%; padding: 11px 14px; border-radius: 9px;
-    border: 1.5px solid #e8eaed; background: #fff;
-    color: #1a1d23; font-size: 14px; font-family: inherit;
-    outline: none; transition: border-color 0.15s, box-shadow 0.15s;
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1.5px solid #d8d2c8;
+    background: #fdfcfa;
+    color: #0f0e0d;
+    font-size: 13px;
+    font-family: 'Instrument Sans', sans-serif;
+    outline: none;
+    transition: border-color 0.13s, box-shadow 0.13s;
+    letter-spacing: -0.01em;
   }
-  .form-input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
-  .form-input.error { border-color: #ef4444; }
-  .error-msg { font-size: 12px; color: #ef4444; margin-top: 5px; }
+
+  .form-input:focus {
+    border-color: #0f0e0d;
+    box-shadow: 0 0 0 2px rgba(15,14,13,0.07);
+  }
+
+  .form-input.error { border-color: #c0392b; }
+
+  .error-msg {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: #c0392b;
+    margin-top: 4px;
+    letter-spacing: 0.02em;
+  }
 
   .alert {
-    background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25);
-    border-radius: 9px; padding: 11px 14px; font-size: 13px; color: #ef4444;
-    margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+    background: rgba(192,57,43,0.06);
+    border: 1px solid rgba(192,57,43,0.2);
+    border-radius: 6px;
+    padding: 10px 13px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: #c0392b;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 0.01em;
   }
+
   .submit-btn {
-    width: 100%; padding: 12px; border-radius: 9px; border: none;
-    background: #6366f1; color: #fff; font-size: 15px; font-weight: 700;
-    font-family: inherit; cursor: pointer;
-    transition: background 0.15s; margin-top: 8px;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%;
+    padding: 11px;
+    border-radius: 6px;
+    border: 1.5px solid #0f0e0d;
+    background: #0f0e0d;
+    color: #f7f4ef;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Instrument Sans', sans-serif;
+    cursor: pointer;
+    transition: background 0.13s, color 0.13s;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    letter-spacing: -0.01em;
   }
-  .submit-btn:hover:not(:disabled) { background: #4f46e5; }
-  .submit-btn:disabled { opacity: 0.65; cursor: not-allowed; }
+
+  .submit-btn:hover:not(:disabled) {
+    background: #1e1c1a;
+  }
+
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
   .spinner {
-    width: 16px; height: 16px;
-    border: 2px solid rgba(255,255,255,0.35); border-top-color: #fff;
-    border-radius: 50%; animation: spin 0.6s linear infinite;
+    width: 14px; height: 14px;
+    border: 2px solid rgba(247,244,239,0.25);
+    border-top-color: #f7f4ef;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
   }
-  .divider { height: 1px; background: #e8eaed; margin: 24px 0; }
-  .hint { font-size: 12px; color: #6b7280; text-align: center; line-height: 1.5; }
-  .hint strong { color: #1a1d23; }
+
+  .divider {
+    height: 1px;
+    background: #d8d2c8;
+    margin: 24px 0;
+  }
+
+  .hint {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: #b0aaa3;
+    text-align: center;
+    line-height: 1.8;
+    letter-spacing: 0.04em;
+  }
+
+  .hint strong {
+    color: #6b6560;
+    font-weight: 500;
+  }
 `;
 
 export function Login({ onSuccess }) {
@@ -125,8 +294,8 @@ export function Login({ onSuccess }) {
 
   function validate() {
     const e = {};
-    if (!username.trim()) e.username = 'Username is required';
-    if (!password.trim()) e.password = 'Password is required';
+    if (!username.trim()) e.username = 'username required';
+    if (!password.trim()) e.password = 'password required';
     return e;
   }
 
@@ -137,7 +306,7 @@ export function Login({ onSuccess }) {
     setError('');
     try {
       await authApi.login(username, password);
-      onSuccess(); // tell App.jsx to switch to dashboard
+      onSuccess();
     } catch (e) {
       setError(e.message);
     } finally {
@@ -149,30 +318,43 @@ export function Login({ onSuccess }) {
     <>
       <style>{CSS}</style>
       <div className="login-root">
+        {/* Left */}
         <div className="login-left">
-          <div className="brand-logo">🏫</div>
-          <div className="brand-title">Student Management System</div>
-          <div className="brand-subtitle">
-            Manage students, courses and enrollments from a single admin panel.
+          <div className="brand-mark">
+            <div className="brand-monogram">S</div>
+            <div className="brand-name">Student Mgmt System</div>
           </div>
-          <div className="feature-list">
+
+          <div className="hero-text">
+            <div className="hero-headline">
+              Manage<br />
+              <em>students &</em><br />
+              courses.
+            </div>
+            <p className="hero-sub">
+              A clean admin panel for student registration, course management, and enrollment tracking.
+            </p>
+          </div>
+
+          <div className="feature-grid">
             {[
-              ['🎓', 'Student registration & profiles'],
-              ['📚', 'Course catalog with fees'],
-              ['✅', 'Enrollment tracking'],
-              ['📊', 'Dashboard overview'],
+              ['◉', 'Student profiles'],
+              ['◎', 'Course catalog'],
+              ['◈', 'Enrollment tracking'],
+              ['◐', 'Dashboard overview'],
             ].map(([icon, text]) => (
-              <div className="feature-item" key={text}>
-                <div className="feature-dot">{icon}</div>
-                <div className="feature-text">{text}</div>
+              <div className="feature-chip" key={text}>
+                <span className="feature-chip-icon">{icon}</span>
+                <span className="feature-chip-label">{text}</span>
               </div>
             ))}
           </div>
         </div>
 
+        {/* Right */}
         <div className="login-right">
           <div className="login-card">
-            <div className="login-card-header">
+            <div className="login-header">
               <h1>Welcome back</h1>
               <p>Sign in to your admin account</p>
             </div>
@@ -180,7 +362,7 @@ export function Login({ onSuccess }) {
             {error && <div className="alert">⚠ {error}</div>}
 
             <div className="form-field">
-              <label>Username</label>
+              <label className="form-label">Username</label>
               <input
                 className={`form-input${errors.username ? ' error' : ''}`}
                 type="text"
@@ -194,7 +376,7 @@ export function Login({ onSuccess }) {
             </div>
 
             <div className="form-field">
-              <label>Password</label>
+              <label className="form-label">Password</label>
               <input
                 className={`form-input${errors.password ? ' error' : ''}`}
                 type="password"
@@ -207,12 +389,12 @@ export function Login({ onSuccess }) {
             </div>
 
             <button className="submit-btn" onClick={handleSubmit} disabled={loading}>
-              {loading ? <><span className="spinner" /> Signing in...</> : 'Sign In'}
+              {loading ? <><span className="spinner" /> Signing in...</> : 'Sign In →'}
             </button>
 
             <div className="divider" />
             <div className="hint">
-              Default: <strong>Admin</strong> / <strong>admin@123</strong>
+              Default — <strong>Admin</strong> / <strong>admin@123</strong>
             </div>
           </div>
         </div>

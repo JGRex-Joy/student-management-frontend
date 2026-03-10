@@ -1,13 +1,12 @@
 // ── Auth ──────────────────────────────────────────────────────────────────────
 export const authApi = {
-  // Spring Security expects application/x-www-form-urlencoded for /login
   login: async (username, password) => {
     const body = new URLSearchParams({ username, password });
     const res = await fetch('/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: body.toString(),
-      credentials: 'include', // send/receive session cookie
+      credentials: 'include',
     });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
@@ -18,7 +17,6 @@ export const authApi = {
 
   logout: async () => {
     await fetch('/logout', { method: 'POST', credentials: 'include' });
-    window.location.href = '/login';
   },
 };
 
@@ -29,7 +27,7 @@ async function request(url, options = {}) {
   const response = await fetch(url, {
     ...options,
     headers,
-    credentials: 'include', // always send session cookie
+    credentials: 'include',
   });
 
   if (response.status === 401 || response.status === 403) {
@@ -63,6 +61,7 @@ export const studentsApi = {
   getById: (id)                 => api.get(`/api/students/${id}`),
   create:  (data)               => api.post('/api/students', data),
   update:  (id, data)           => api.put(`/api/students/${id}`, data),
+  delete:  (id)                 => api.delete(`/api/students/${id}`),
 };
 
 // ── Courses ───────────────────────────────────────────────────────────────────

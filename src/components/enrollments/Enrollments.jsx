@@ -5,7 +5,7 @@ import { Spinner, Pagination, Toast, Modal, Btn, EmptyState, Card, CardHeader } 
 
 export function Enrollments({ onNavigate }) {
   const { data, loading, error, page, setPage } = usePaginated(enrollmentsApi.list, 0, 8);
-  const [detailModal, setDetailModal] = useState(null); // studentId
+  const [detailModal, setDetailModal] = useState(null);
   const [toast, setToast] = useState(null);
 
   const notify = (msg, type = 'success') => {
@@ -17,11 +17,14 @@ export function Enrollments({ onNavigate }) {
     <>
       <Toast message={toast?.msg} type={toast?.type} onClose={() => setToast(null)} />
 
-      <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ marginBottom: 28, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
         <div>
-          <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--text)', margin: 0 }}>Enrollments</h1>
-          <p style={{ color: 'var(--text-muted)', margin: '4px 0 0', fontSize: 13 }}>
-            {data?.totalElements ?? 0} students enrolled in courses
+          <h1 style={{
+            fontSize: 26, fontFamily: 'var(--font-display)', fontWeight: 700,
+            color: 'var(--text)', margin: 0, letterSpacing: '-0.03em',
+          }}>Enrollments</h1>
+          <p style={{ color: 'var(--ink-faint)', margin: '6px 0 0', fontSize: 11, fontFamily: 'var(--font-mono)', letterSpacing: '0.02em' }}>
+            {data?.totalElements ?? 0} students enrolled
           </p>
         </div>
         <Btn onClick={() => onNavigate('enroll')}>+ Enroll Student</Btn>
@@ -30,42 +33,61 @@ export function Enrollments({ onNavigate }) {
       <Card>
         <CardHeader title="Enrolled Students" />
         {loading ? <Spinner /> : error ? (
-          <div style={{ padding: 24, color: 'var(--red)' }}>Error: {error}</div>
+          <div style={{ padding: 24, color: 'var(--red)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>Error: {error}</div>
         ) : !data?.content?.length ? (
-          <EmptyState icon="📋" title="No enrollments yet" subtitle="Enroll a student to a course to see them here" />
+          <EmptyState icon="◎" title="No enrollments yet" subtitle="enroll a student to see them here" />
         ) : (
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
-                <tr style={{ background: 'var(--bg)' }}>
+                <tr style={{ background: 'var(--cream)' }}>
                   {['#', 'Student Name', 'Email', 'Courses', 'Total Fee', 'Actions'].map(h => (
-                    <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontSize: 12, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.4, borderBottom: '1px solid var(--border)' }}>{h}</th>
+                    <th key={h} style={{
+                      padding: '10px 18px', textAlign: 'left',
+                      fontSize: 10, fontWeight: 500,
+                      fontFamily: 'var(--font-mono)',
+                      color: 'var(--ink-faint)',
+                      textTransform: 'uppercase', letterSpacing: '0.07em',
+                      borderBottom: '1px solid var(--border)',
+                    }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {data.content.map((s, i) => (
-                  <tr key={s.studentId} style={{ borderBottom: '1px solid var(--border)', background: i % 2 === 0 ? 'transparent' : 'rgba(0,0,0,0.015)' }}>
-                    <td style={{ padding: '12px 16px', color: 'var(--text-muted)', fontSize: 13 }}>#{s.studentId}</td>
-                    <td style={{ padding: '12px 16px', fontWeight: 600, color: 'var(--text)' }}>{s.studentName}</td>
-                    <td style={{ padding: '12px 16px', color: 'var(--text-muted)' }}>{s.email}</td>
-                    <td style={{ padding: '12px 16px' }}>
-                      <span style={{
-                        background: 'rgba(99,102,241,0.1)', color: 'var(--accent)',
-                        padding: '3px 10px', borderRadius: 20, fontSize: 12, fontWeight: 700,
-                      }}>{s.courseCount} {s.courseCount === 1 ? 'course' : 'courses'}</span>
+                  <tr key={s.studentId} style={{
+                    borderBottom: '1px solid var(--border)',
+                    background: 'transparent',
+                    transition: 'background 0.1s',
+                  }}>
+                    <td style={{ padding: '12px 18px', fontFamily: 'var(--font-mono)', color: 'var(--ink-faint)', fontSize: 11 }}>
+                      {String(s.studentId).padStart(3, '0')}
                     </td>
-                    <td style={{ padding: '12px 16px', fontWeight: 600, color: 'var(--green)' }}>
+                    <td style={{ padding: '12px 18px', fontWeight: 600, color: 'var(--text)' }}>{s.studentName}</td>
+                    <td style={{ padding: '12px 18px', color: 'var(--ink-muted)', fontFamily: 'var(--font-mono)', fontSize: 11 }}>{s.email}</td>
+                    <td style={{ padding: '12px 18px' }}>
+                      <span style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: 11,
+                        border: '1px solid var(--border)',
+                        borderRadius: 4,
+                        padding: '2px 8px',
+                        color: 'var(--ink-muted)',
+                      }}>
+                        {s.courseCount} {s.courseCount === 1 ? 'course' : 'courses'}
+                      </span>
+                    </td>
+                    <td style={{ padding: '12px 18px', fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--green)', fontSize: 12 }}>
                       ₹{Number(s.totalFee || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                     </td>
-                    <td style={{ padding: '12px 16px' }}>
-                      <Btn size="sm" variant="ghost" onClick={() => setDetailModal(s.studentId)}>View Details</Btn>
+                    <td style={{ padding: '12px 18px' }}>
+                      <Btn size="sm" variant="ghost" onClick={() => setDetailModal(s.studentId)}>View</Btn>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <div style={{ padding: '12px 16px' }}>
+            <div style={{ padding: '10px 18px' }}>
               <Pagination page={page} totalPages={data.totalPages} onChange={setPage} />
             </div>
           </div>
@@ -83,29 +105,44 @@ function EnrollmentDetailModal({ studentId, onClose }) {
   const { data, loading, error } = useFetch(() => enrollmentsApi.details(studentId), [studentId]);
 
   return (
-    <Modal title="Enrollment Details" onClose={onClose} width={680}>
+    <Modal title="Enrollment Details" onClose={onClose} width={660}>
       {loading ? <Spinner /> : error ? (
-        <div style={{ color: 'var(--red)' }}>Error loading details: {error}</div>
+        <div style={{ color: 'var(--red)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+          Error loading details: {error}
+        </div>
       ) : (
         <>
-          {/* Student Summary */}
           <div style={{
-            background: 'var(--bg)', borderRadius: 10, padding: '16px 18px',
-            marginBottom: 20, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12,
+            background: 'var(--cream)',
+            borderRadius: 7, padding: '14px 18px',
+            marginBottom: 20,
+            display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 12,
+            border: '1px solid var(--border)',
           }}>
             <SummaryItem label="Student" value={data.studentName} />
-            <SummaryItem label="Email" value={data.email} />
-            <SummaryItem label="Total Courses" value={data.courseCount} />
+            <SummaryItem label="Email" value={data.email} small />
+            <SummaryItem label="Courses" value={data.courseCount} />
             <SummaryItem label="Total Fee" value={`₹${Number(data.totalFee || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`} accent />
           </div>
 
-          {/* Course Table */}
-          <div style={{ fontWeight: 700, fontSize: 13, color: 'var(--text)', marginBottom: 10 }}>Enrolled Courses</div>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+          <div style={{
+            fontFamily: 'var(--font-mono)', fontSize: 10,
+            color: 'var(--ink-faint)', letterSpacing: '0.08em',
+            textTransform: 'uppercase', marginBottom: 10,
+          }}>Enrolled Courses</div>
+
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
             <thead>
-              <tr style={{ background: 'var(--bg)' }}>
+              <tr style={{ background: 'var(--cream)' }}>
                 {['Course Name', 'Code', 'Duration', 'Fee'].map(h => (
-                  <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', borderBottom: '1px solid var(--border)' }}>{h}</th>
+                  <th key={h} style={{
+                    padding: '9px 14px', textAlign: 'left',
+                    fontSize: 10, fontWeight: 500,
+                    fontFamily: 'var(--font-mono)',
+                    color: 'var(--ink-faint)',
+                    textTransform: 'uppercase', letterSpacing: '0.07em',
+                    borderBottom: '1px solid var(--border)',
+                  }}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -114,10 +151,17 @@ function EnrollmentDetailModal({ studentId, onClose }) {
                 <tr key={c.id || i} style={{ borderBottom: '1px solid var(--border)' }}>
                   <td style={{ padding: '10px 14px', fontWeight: 600, color: 'var(--text)' }}>{c.courseName}</td>
                   <td style={{ padding: '10px 14px' }}>
-                    <span style={{ background: 'rgba(99,102,241,0.1)', color: 'var(--accent)', padding: '2px 7px', borderRadius: 4, fontSize: 11, fontWeight: 700 }}>{c.courseCode}</span>
+                    <span style={{
+                      fontFamily: 'var(--font-mono)', fontSize: 10,
+                      border: '1px solid var(--border)',
+                      borderRadius: 3, padding: '2px 6px',
+                      color: 'var(--ink-muted)',
+                    }}>{c.courseCode}</span>
                   </td>
-                  <td style={{ padding: '10px 14px', color: 'var(--text-muted)' }}>{c.duration}</td>
-                  <td style={{ padding: '10px 14px', fontWeight: 600 }}>₹{Number(c.fee).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                  <td style={{ padding: '10px 14px', color: 'var(--ink-muted)' }}>{c.duration}</td>
+                  <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', fontWeight: 500 }}>
+                    ₹{Number(c.fee).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -132,11 +176,22 @@ function EnrollmentDetailModal({ studentId, onClose }) {
   );
 }
 
-function SummaryItem({ label, value, accent }) {
+function SummaryItem({ label, value, accent, small }) {
   return (
     <div>
-      <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', marginBottom: 4 }}>{label}</div>
-      <div style={{ fontSize: 15, fontWeight: 700, color: accent ? 'var(--green)' : 'var(--text)' }}>{value}</div>
+      <div style={{
+        fontFamily: 'var(--font-mono)', fontSize: 9,
+        color: 'var(--ink-faint)', fontWeight: 500,
+        textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4,
+      }}>{label}</div>
+      <div style={{
+        fontSize: small ? 11 : 14,
+        fontWeight: 700,
+        fontFamily: small ? 'var(--font-mono)' : 'var(--font-body)',
+        color: accent ? 'var(--green)' : 'var(--text)',
+        letterSpacing: '-0.01em',
+        wordBreak: 'break-all',
+      }}>{value}</div>
     </div>
   );
 }
