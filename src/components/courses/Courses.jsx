@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { coursesApi } from '../../api/client';
 import { usePaginated } from '../../hooks/useFetch';
 import {
@@ -18,14 +18,25 @@ function validate(f) {
   return e;
 }
 
+function useIsMobile() {
+  const [mobile, setMobile] = useState(window.innerWidth < 640);
+  useEffect(() => {
+    const fn = () => setMobile(window.innerWidth < 640);
+    window.addEventListener('resize', fn);
+    return () => window.removeEventListener('resize', fn);
+  }, []);
+  return mobile;
+}
+
 export function Courses() {
   const { data, loading, error, page, setPage, refetch } = usePaginated(coursesApi.list, 0, 8);
-  const [toast, setToast]     = useState(null);
-  const [modal, setModal]     = useState(null);
-  const [form, setForm]       = useState(EMPTY_FORM);
+  const isMobile = useIsMobile();
+  const [toast, setToast]           = useState(null);
+  const [modal, setModal]           = useState(null);
+  const [form, setForm]             = useState(EMPTY_FORM);
   const [formErrors, setFormErrors] = useState({});
-  const [saving, setSaving]   = useState(false);
-  const [editId, setEditId]   = useState(null);
+  const [saving, setSaving]         = useState(false);
+  const [editId, setEditId]         = useState(null);
 
   const notify = (msg, type = 'success') => {
     setToast({ msg, type });
@@ -63,12 +74,9 @@ export function Courses() {
     <>
       <Toast message={toast?.msg} type={toast?.type} onClose={() => setToast(null)} />
 
-      <div style={{ marginBottom: 28, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+      <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
         <div>
-          <h1 style={{
-            fontSize: 26, fontFamily: 'var(--font-display)', fontWeight: 700,
-            color: 'var(--text)', margin: 0, letterSpacing: '-0.03em',
-          }}>Courses</h1>
+          <h1 style={{ fontSize: 26, fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--text)', margin: 0, letterSpacing: '-0.03em' }}>Courses</h1>
           <p style={{ color: 'var(--ink-faint)', margin: '6px 0 0', fontSize: 11, fontFamily: 'var(--font-mono)', letterSpacing: '0.02em' }}>
             {data?.totalElements ?? 0} active courses
           </p>
@@ -82,42 +90,53 @@ export function Courses() {
           <div style={{ padding: 24, color: 'var(--red)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>Error: {error}</div>
         ) : !data?.content?.length ? (
           <EmptyState icon="◎" title="No courses yet" subtitle="create your first course" />
+        ) : isMobile ? (
+          /* Mobile card list */
+          <div>
+            {data.content.map((c) => (
+              <div key={c.id} style={{ padding: '14px 16px', borderBottom: '1px solid var(--border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
+                  <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--text)' }}>{c.courseName}</div>
+                  <Badge active={c.active} />
+                </div>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 8, flexWrap: 'wrap' }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, border: '1px solid var(--border)', borderRadius: 3, padding: '2px 7px', color: 'var(--ink-muted)' }}>{c.courseCode}</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--ink-muted)' }}>{c.duration}</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: 12, color: 'var(--text)' }}>
+                    ${Number(c.fee).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <Btn size="sm" variant="ghost"     onClick={() => openView(c)}>View</Btn>
+                  <Btn size="sm" variant="secondary" onClick={() => openEdit(c)}>Edit</Btn>
+                </div>
+              </div>
+            ))}
+            <div style={{ padding: '10px 16px' }}>
+              <Pagination page={page} totalPages={data.totalPages} onChange={setPage} />
+            </div>
+          </div>
         ) : (
+          /* Desktop table */
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
                 <tr style={{ background: 'var(--cream)' }}>
                   {['#', 'Course Name', 'Code', 'Duration', 'Fee', 'Status', 'Actions'].map(h => (
-                    <th key={h} style={{
-                      padding: '10px 18px', textAlign: 'left',
-                      fontSize: 10, fontWeight: 500,
-                      fontFamily: 'var(--font-mono)',
-                      color: 'var(--ink-faint)',
-                      textTransform: 'uppercase', letterSpacing: '0.07em',
-                      borderBottom: '1px solid var(--border)',
-                    }}>{h}</th>
+                    <th key={h} style={{ padding: '10px 18px', textAlign: 'left', fontSize: 10, fontWeight: 500, fontFamily: 'var(--font-mono)', color: 'var(--ink-faint)', textTransform: 'uppercase', letterSpacing: '0.07em', borderBottom: '1px solid var(--border)' }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {data.content.map((c) => (
                   <tr key={c.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                    <td style={{ padding: '12px 18px', fontFamily: 'var(--font-mono)', color: 'var(--ink-faint)', fontSize: 11 }}>
-                      {String(c.id).padStart(3, '0')}
-                    </td>
+                    <td style={{ padding: '12px 18px', fontFamily: 'var(--font-mono)', color: 'var(--ink-faint)', fontSize: 11 }}>{String(c.id).padStart(3, '0')}</td>
                     <td style={{ padding: '12px 18px', fontWeight: 600, color: 'var(--text)' }}>{c.courseName}</td>
                     <td style={{ padding: '12px 18px' }}>
-                      <span style={{
-                        fontFamily: 'var(--font-mono)', fontSize: 10,
-                        border: '1px solid var(--border)',
-                        borderRadius: 3, padding: '2px 7px',
-                        color: 'var(--ink-muted)',
-                      }}>{c.courseCode}</span>
+                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, border: '1px solid var(--border)', borderRadius: 3, padding: '2px 7px', color: 'var(--ink-muted)' }}>{c.courseCode}</span>
                     </td>
                     <td style={{ padding: '12px 18px', color: 'var(--ink-muted)' }}>{c.duration}</td>
-                    <td style={{ padding: '12px 18px', fontFamily: 'var(--font-mono)', fontWeight: 500, fontSize: 12 }}>
-                      ${Number(c.fee).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                    </td>
+                    <td style={{ padding: '12px 18px', fontFamily: 'var(--font-mono)', fontWeight: 500, fontSize: 12 }}>${Number(c.fee).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                     <td style={{ padding: '12px 18px' }}><Badge active={c.active} /></td>
                     <td style={{ padding: '12px 18px' }}>
                       <div style={{ display: 'flex', gap: 6 }}>
@@ -138,8 +157,8 @@ export function Courses() {
 
       {(modal === 'create' || modal === 'edit') && (
         <Modal title={modal === 'create' ? 'Add New Course' : 'Edit Course'} onClose={() => setModal(null)}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-            <FormField label="Course Name" error={formErrors.courseName} required style={{ gridColumn: '1/-1' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 12 }}>
+            <FormField label="Course Name" error={formErrors.courseName} required style={{ gridColumn: isMobile ? '1' : '1/-1' }}>
               <Input value={form.courseName} onChange={change('courseName')} error={formErrors.courseName} placeholder="e.g. Web Development" />
             </FormField>
             <FormField label="Course Code" error={formErrors.courseCode} required>
@@ -197,17 +216,10 @@ function DetailRow({ label, value, mono }) {
   return (
     <div style={{
       display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-      padding: '10px 0', borderBottom: '1px solid var(--border)', fontSize: 13,
+      padding: '10px 0', borderBottom: '1px solid var(--border)', fontSize: 13, gap: 12,
     }}>
-      <span style={{
-        fontFamily: 'var(--font-mono)', fontSize: 10,
-        color: 'var(--ink-faint)', letterSpacing: '0.06em', textTransform: 'uppercase',
-      }}>{label}</span>
-      <span style={{
-        color: 'var(--text)', fontWeight: 500,
-        fontFamily: mono ? 'var(--font-mono)' : 'var(--font-body)',
-        fontSize: mono ? 12 : 13,
-      }}>{value}</span>
+      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--ink-faint)', letterSpacing: '0.06em', textTransform: 'uppercase', flexShrink: 0 }}>{label}</span>
+      <span style={{ color: 'var(--text)', fontWeight: 500, fontFamily: mono ? 'var(--font-mono)' : 'var(--font-body)', fontSize: mono ? 12 : 13, textAlign: 'right' }}>{value}</span>
     </div>
   );
 }

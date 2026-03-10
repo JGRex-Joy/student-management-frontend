@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { studentsApi } from '../../api/client';
 import { usePaginated } from '../../hooks/useFetch';
 import {
@@ -17,8 +17,19 @@ function validate(f) {
   return e;
 }
 
+function useIsMobile() {
+  const [mobile, setMobile] = useState(window.innerWidth < 640);
+  useEffect(() => {
+    const fn = () => setMobile(window.innerWidth < 640);
+    window.addEventListener('resize', fn);
+    return () => window.removeEventListener('resize', fn);
+  }, []);
+  return mobile;
+}
+
 export function Students() {
   const { data, loading, error, page, setPage, refetch } = usePaginated(studentsApi.list, 0, 8);
+  const isMobile = useIsMobile();
   const [toast, setToast]           = useState(null);
   const [modal, setModal]           = useState(null);
   const [form, setForm]             = useState(EMPTY_FORM);
@@ -78,12 +89,9 @@ export function Students() {
     <>
       <Toast message={toast?.msg} type={toast?.type} onClose={() => setToast(null)} />
 
-      <div style={{ marginBottom: 28, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+      <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
         <div>
-          <h1 style={{
-            fontSize: 26, fontFamily: 'var(--font-display)', fontWeight: 700,
-            color: 'var(--text)', margin: 0, letterSpacing: '-0.03em',
-          }}>Students</h1>
+          <h1 style={{ fontSize: 26, fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--text)', margin: 0, letterSpacing: '-0.03em' }}>Students</h1>
           <p style={{ color: 'var(--ink-faint)', margin: '6px 0 0', fontSize: 11, fontFamily: 'var(--font-mono)', letterSpacing: '0.02em' }}>
             {data?.totalElements ?? 0} total registered
           </p>
@@ -97,7 +105,40 @@ export function Students() {
           <div style={{ padding: 24, color: 'var(--red)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>Error: {error}</div>
         ) : !data?.content?.length ? (
           <EmptyState icon="◉" title="No students yet" subtitle="add your first student to get started" />
+        ) : isMobile ? (
+          /* Mobile card list */
+          <div>
+            {data.content.map((s) => (
+              <div key={s.id} style={{
+                padding: '14px 16px',
+                borderBottom: '1px solid var(--border)',
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--text)' }}>{s.firstName} {s.lastName}</div>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--ink-muted)', marginTop: 2 }}>{s.email}</div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <Badge active={s.active} />
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--ink-faint)' }}>#{String(s.id).padStart(3, '0')}</span>
+                  </div>
+                </div>
+                {s.phoneNumber && (
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--ink-faint)', marginBottom: 10 }}>{s.phoneNumber}</div>
+                )}
+                <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+                  <Btn size="sm" variant="ghost"     onClick={() => openView(s)}>View</Btn>
+                  <Btn size="sm" variant="secondary" onClick={() => openEdit(s)}>Edit</Btn>
+                  <Btn size="sm" variant="danger"    onClick={() => setDeleteTarget({ id: s.id, name: `${s.firstName} ${s.lastName}` })}>Delete</Btn>
+                </div>
+              </div>
+            ))}
+            <div style={{ padding: '10px 16px' }}>
+              <Pagination page={page} totalPages={data.totalPages} onChange={setPage} />
+            </div>
+          </div>
         ) : (
+          /* Desktop table */
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
@@ -105,10 +146,8 @@ export function Students() {
                   {['#', 'Name', 'Email', 'Phone', 'Status', 'Actions'].map(h => (
                     <th key={h} style={{
                       padding: '10px 18px', textAlign: 'left',
-                      fontSize: 10, fontWeight: 500,
-                      fontFamily: 'var(--font-mono)',
-                      color: 'var(--ink-faint)',
-                      textTransform: 'uppercase', letterSpacing: '0.07em',
+                      fontSize: 10, fontWeight: 500, fontFamily: 'var(--font-mono)',
+                      color: 'var(--ink-faint)', textTransform: 'uppercase', letterSpacing: '0.07em',
                       borderBottom: '1px solid var(--border)',
                     }}>{h}</th>
                   ))}
@@ -117,16 +156,10 @@ export function Students() {
               <tbody>
                 {data.content.map((s) => (
                   <tr key={s.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                    <td style={{ padding: '12px 18px', fontFamily: 'var(--font-mono)', color: 'var(--ink-faint)', fontSize: 11 }}>
-                      {String(s.id).padStart(3, '0')}
-                    </td>
-                    <td style={{ padding: '12px 18px', fontWeight: 600, color: 'var(--text)' }}>
-                      {s.firstName} {s.lastName}
-                    </td>
+                    <td style={{ padding: '12px 18px', fontFamily: 'var(--font-mono)', color: 'var(--ink-faint)', fontSize: 11 }}>{String(s.id).padStart(3, '0')}</td>
+                    <td style={{ padding: '12px 18px', fontWeight: 600, color: 'var(--text)' }}>{s.firstName} {s.lastName}</td>
                     <td style={{ padding: '12px 18px', color: 'var(--ink-muted)', fontFamily: 'var(--font-mono)', fontSize: 11 }}>{s.email}</td>
-                    <td style={{ padding: '12px 18px', color: 'var(--ink-muted)', fontFamily: 'var(--font-mono)', fontSize: 11 }}>
-                      {s.phoneNumber || '—'}
-                    </td>
+                    <td style={{ padding: '12px 18px', color: 'var(--ink-muted)', fontFamily: 'var(--font-mono)', fontSize: 11 }}>{s.phoneNumber || '—'}</td>
                     <td style={{ padding: '12px 18px' }}><Badge active={s.active} /></td>
                     <td style={{ padding: '12px 18px' }}>
                       <div style={{ display: 'flex', gap: 6 }}>
@@ -148,7 +181,7 @@ export function Students() {
 
       {(modal === 'create' || modal === 'edit') && (
         <Modal title={modal === 'create' ? 'Add New Student' : 'Edit Student'} onClose={() => setModal(null)}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 12 }}>
             <FormField label="First Name" error={formErrors.firstName} required>
               <Input value={form.firstName} onChange={change('firstName')} error={formErrors.firstName} placeholder="Zhanel" />
             </FormField>
@@ -183,10 +216,10 @@ export function Students() {
       {modal === 'view' && (
         <Modal title="Student Details" onClose={() => setModal(null)}>
           <DetailRow label="Full Name" value={`${form.firstName} ${form.lastName}`} />
-          <DetailRow label="Email"     value={form.email} mono />
-          <DetailRow label="Phone"     value={form.phoneNumber || '—'} mono />
-          <DetailRow label="Address"   value={form.address || '—'} />
-          <DetailRow label="Status"    value={<Badge active={form.active} />} />
+          <DetailRow label="Email"   value={form.email} mono />
+          <DetailRow label="Phone"   value={form.phoneNumber || '—'} mono />
+          <DetailRow label="Address" value={form.address || '—'} />
+          <DetailRow label="Status"  value={<Badge active={form.active} />} />
           <div style={{ marginTop: 20, display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
             <Btn variant="secondary" onClick={() => setModal(null)}>Close</Btn>
             <Btn onClick={() => openEdit(form)}>Edit</Btn>
@@ -217,17 +250,10 @@ function DetailRow({ label, value, mono }) {
     <div style={{
       display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       padding: '10px 0', borderBottom: '1px solid var(--border)', fontSize: 13,
+      gap: 12,
     }}>
-      <span style={{
-        fontFamily: 'var(--font-mono)', fontSize: 10,
-        color: 'var(--ink-faint)', letterSpacing: '0.06em',
-        textTransform: 'uppercase',
-      }}>{label}</span>
-      <span style={{
-        color: 'var(--text)', fontWeight: 500,
-        fontFamily: mono ? 'var(--font-mono)' : 'var(--font-body)',
-        fontSize: mono ? 12 : 13,
-      }}>{value}</span>
+      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--ink-faint)', letterSpacing: '0.06em', textTransform: 'uppercase', flexShrink: 0 }}>{label}</span>
+      <span style={{ color: 'var(--text)', fontWeight: 500, fontFamily: mono ? 'var(--font-mono)' : 'var(--font-body)', fontSize: mono ? 12 : 13, textAlign: 'right', wordBreak: 'break-all' }}>{value}</span>
     </div>
   );
 }
