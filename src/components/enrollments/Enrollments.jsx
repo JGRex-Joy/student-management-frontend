@@ -90,7 +90,7 @@ export function Enrollments({ onNavigate }) {
                       </span>
                     </td>
                     <td style={{ padding: '12px 18px', fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--green)', fontSize: 12 }}>
-                      ₹{Number(s.totalFee || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                      ⃀{Number(s.totalFee || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                     </td>
                     <td style={{ padding: '12px 18px' }}>
                       <Btn size="sm" variant="ghost" onClick={() => setDetailModal(s.studentId)}>View</Btn>
@@ -134,7 +134,7 @@ function EnrollmentDetailModal({ studentId, onClose }) {
             <SummaryItem label="Student" value={data.studentName} />
             <SummaryItem label="Email" value={data.email} small />
             <SummaryItem label="Courses" value={data.courseCount} />
-            <SummaryItem label="Total Fee" value={`₹${Number(data.totalFee || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`} accent />
+            <SummaryItem label="Total Fee" value={`⃀{Number(data.totalFee || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`} accent />
           </div>
 
           <div style={{
@@ -172,7 +172,7 @@ function EnrollmentDetailModal({ studentId, onClose }) {
                   </td>
                   <td style={{ padding: '10px 14px', color: 'var(--ink-muted)' }}>{c.duration}</td>
                   <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', fontWeight: 500 }}>
-                    ₹{Number(c.fee).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                    ⃀{Number(c.fee).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                   </td>
                 </tr>
               ))}
