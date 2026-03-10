@@ -1,23 +1,36 @@
-// Reads the CSRF token injected by Spring Security into the page meta tags
-function getCsrfToken() {
-  const meta = document.querySelector('meta[name="_csrf"]');
-  return meta ? meta.getAttribute('content') : null;
-}
+// ── Auth ──────────────────────────────────────────────────────────────────────
+export const authApi = {
+  // Spring Security expects application/x-www-form-urlencoded for /login
+  login: async (username, password) => {
+    const body = new URLSearchParams({ username, password });
+    const res = await fetch('/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: body.toString(),
+      credentials: 'include', // send/receive session cookie
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || 'Invalid username or password');
+    }
+    return res.json();
+  },
 
-function getCsrfHeader() {
-  const meta = document.querySelector('meta[name="_csrf_header"]');
-  return meta ? meta.getAttribute('content') : 'X-CSRF-TOKEN';
-}
+  logout: async () => {
+    await fetch('/logout', { method: 'POST', credentials: 'include' });
+    window.location.href = '/login';
+  },
+};
 
+// ── Base request ──────────────────────────────────────────────────────────────
 async function request(url, options = {}) {
   const headers = { 'Content-Type': 'application/json', ...options.headers };
 
-  const token = getCsrfToken();
-  if (token && ['POST', 'PUT', 'DELETE', 'PATCH'].includes((options.method || 'GET').toUpperCase())) {
-    headers[getCsrfHeader()] = token;
-  }
-
-  const response = await fetch(url, { ...options, headers });
+  const response = await fetch(url, {
+    ...options,
+    headers,
+    credentials: 'include', // always send session cookie
+  });
 
   if (response.status === 401 || response.status === 403) {
     window.location.href = '/login';
@@ -37,33 +50,33 @@ async function request(url, options = {}) {
 }
 
 export const api = {
-  get: (url) => request(url),
-  post: (url, data) => request(url, { method: 'POST', body: JSON.stringify(data) }),
-  put: (url, data) => request(url, { method: 'PUT', body: JSON.stringify(data) }),
-  delete: (url) => request(url, { method: 'DELETE' }),
+  get:    (url)       => request(url),
+  post:   (url, data) => request(url, { method: 'POST',   body: JSON.stringify(data) }),
+  put:    (url, data) => request(url, { method: 'PUT',    body: JSON.stringify(data) }),
+  delete: (url)       => request(url, { method: 'DELETE' }),
 };
 
 // ── Students ──────────────────────────────────────────────────────────────────
 export const studentsApi = {
-  list: (page = 0, size = 8) => api.get(`/api/students?page=${page}&size=${size}`),
-  all: () => api.get('/api/students/all'),
-  getById: (id) => api.get(`/api/students/${id}`),
-  create: (data) => api.post('/api/students', data),
-  update: (id, data) => api.put(`/api/students/${id}`, data),
+  list:    (page = 0, size = 8) => api.get(`/api/students?page=${page}&size=${size}`),
+  all:     ()                   => api.get('/api/students/all'),
+  getById: (id)                 => api.get(`/api/students/${id}`),
+  create:  (data)               => api.post('/api/students', data),
+  update:  (id, data)           => api.put(`/api/students/${id}`, data),
 };
 
 // ── Courses ───────────────────────────────────────────────────────────────────
 export const coursesApi = {
-  list: (page = 0, size = 8) => api.get(`/api/courses?page=${page}&size=${size}`),
-  all: () => api.get('/api/courses/all'),
-  getById: (id) => api.get(`/api/courses/${id}`),
-  create: (data) => api.post('/api/courses', data),
-  update: (id, data) => api.put(`/api/courses/${id}`, data),
+  list:    (page = 0, size = 8) => api.get(`/api/courses?page=${page}&size=${size}`),
+  all:     ()                   => api.get('/api/courses/all'),
+  getById: (id)                 => api.get(`/api/courses/${id}`),
+  create:  (data)               => api.post('/api/courses', data),
+  update:  (id, data)           => api.put(`/api/courses/${id}`, data),
 };
 
 // ── Enrollments ───────────────────────────────────────────────────────────────
 export const enrollmentsApi = {
-  list: (page = 0, size = 8) => api.get(`/api/enrollments?page=${page}&size=${size}`),
-  details: (studentId) => api.get(`/api/enrollments/${studentId}/details`),
-  enroll: (data) => api.post('/api/enrollments', data),
+  list:    (page = 0, size = 8) => api.get(`/api/enrollments?page=${page}&size=${size}`),
+  details: (studentId)          => api.get(`/api/enrollments/${studentId}/details`),
+  enroll:  (data)               => api.post('/api/enrollments', data),
 };
