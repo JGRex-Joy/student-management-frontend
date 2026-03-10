@@ -6,6 +6,7 @@ import { Courses } from './components/courses/Courses';
 import { Enrollments } from './components/enrollments/Enrollments';
 import { EnrollStudent } from './components/enrollments/EnrollStudent';
 import { Login } from './components/login/Login';
+import { BASE } from './api/base';
 
 const GLOBAL_CSS = `
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap');
@@ -76,16 +77,17 @@ const GLOBAL_CSS = `
 export default function App() {
   const [view, setView] = useState('dashboard');
   const [page, setPage] = useState('loading');
+
   useEffect(() => {
     const isRefresh = sessionStorage.getItem('tab_active');
 
     if (!isRefresh) {
-      fetch('/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
+      fetch(`${BASE}/logout`, { method: 'POST', credentials: 'include' }).catch(() => {});
       setPage('login');
       return;
     }
 
-    fetch('/api/students?page=0&size=1', { credentials: 'include' })
+    fetch(`${BASE}/api/students?page=0&size=1`, { credentials: 'include' })
       .then(res => {
         if (res.status === 401 || res.status === 403) {
           setPage('login');

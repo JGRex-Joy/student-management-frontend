@@ -1,7 +1,9 @@
+import { BASE } from './base';
+
 export const authApi = {
   login: async (username, password) => {
     const body = new URLSearchParams({ username, password });
-    const res = await fetch('/login', {
+    const res = await fetch(`${BASE}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: body.toString(),
@@ -15,21 +17,21 @@ export const authApi = {
   },
 
   logout: async () => {
-    await fetch('/logout', { method: 'POST', credentials: 'include' });
+    await fetch(`${BASE}/logout`, { method: 'POST', credentials: 'include' });
   },
 };
 
 async function request(url, options = {}) {
   const headers = { 'Content-Type': 'application/json', ...options.headers };
 
-  const response = await fetch(url, {
+  const response = await fetch(`${BASE}${url}`, {
     ...options,
     headers,
     credentials: 'include',
   });
 
   if (response.status === 401 || response.status === 403) {
-    window.location.href = '/login';
+    window.location.href = '/';
     return;
   }
 

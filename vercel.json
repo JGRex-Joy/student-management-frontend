@@ -1,6 +1,9 @@
 {
-  "buildCommand": "vite build --outDir dist",
+  "buildCommand": "VERCEL=true vite build --outDir dist",
   "outputDirectory": "dist",
+  "env": {
+    "VITE_API_BASE": "https://student-management-backend-wz71.onrender.com"
+  },
   "rewrites": [
     { "source": "/((?!assets/).*)", "destination": "/index.html" }
   ]
