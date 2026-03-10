@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { authApi } from '../../api/client';
 
 const NAV = [
   { icon: '⚡', label: 'Dashboard', view: 'dashboard' },
@@ -8,8 +9,14 @@ const NAV = [
   { icon: '➕', label: 'Enroll Student', view: 'enroll' },
 ];
 
-export function Layout({ children, activeView, onNavigate }) {
+export function Layout({ children, activeView, onNavigate, onLogout }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  async function handleLogout() {
+    // POST /logout to invalidate session on server, then show login page
+    await fetch('/logout', { method: 'POST', credentials: 'include' });
+    onLogout(); // switch App back to 'login' state — no full page reload
+  }
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg)' }}>
@@ -55,11 +62,9 @@ export function Layout({ children, activeView, onNavigate }) {
           ))}
         </nav>
 
-        {/* Logout */}
+        {/* Logout — button, not <a href>, to avoid GET /logout */}
         <div style={{ padding: '12px 10px', borderTop: '1px solid var(--sidebar-border)' }}>
-          <a href="/logout" style={{ textDecoration: 'none' }}>
-            <NavItem icon="🚪" label="Logout" />
-          </a>
+          <NavItem icon="🚪" label="Logout" onClick={handleLogout} />
         </div>
       </aside>
 

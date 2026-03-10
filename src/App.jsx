@@ -52,10 +52,9 @@ const GLOBAL_CSS = `
 
 export default function App() {
   const [view, setView] = useState('dashboard');
-  // React controls routing — no server-side pages needed
-  const [page, setPage] = useState(
-    window.location.pathname === '/login' ? 'login' : 'app'
-  );
+  // Always start on login — user must authenticate first.
+  // After successful login, onSuccess() switches to 'app'.
+  const [page, setPage] = useState('login');
 
   if (page === 'login') {
     return (
@@ -69,7 +68,7 @@ export default function App() {
   return (
     <>
       <style>{GLOBAL_CSS}</style>
-      <Layout activeView={view} onNavigate={setView}>
+      <Layout activeView={view} onNavigate={setView} onLogout={() => setPage('login')}>
         {view === 'dashboard'   && <Dashboard />}
         {view === 'students'    && <Students />}
         {view === 'courses'     && <Courses />}
